@@ -2,56 +2,47 @@
 let choiceList = ['p1'];
 let currentPage = null;
 
-///////////////////////////////////////////////////
-//////// TODOs ///////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// Fill in the blanks below to complete each TODO task.                       //
-////////////////////////////////////////////////////////////////////////////////
+function getCurrentPage(pageSlug) {
+    let newPage = storyData[pageSlug];
+    return newPage;
+}
 
-// TODO: Create a function called `getCurrentPage()`. It should accept one
-// parameter, which is the `slug` for the current page. This function will fetch
-// the current page and return a page object using the `slug` value for a key.
+function recordChoice(pageSlug) {
+    choiceList.push(pageSlug);
+}
 
+function undoChoice() {
+    choiceList.pop();
+    return choiceList[choiceList.length - 1];
+}
 
+let pageContent = document.querySelector('#story-text');
+let choicesUL = document.querySelector('#choices');
+let image_tracker = document.querySelector('#page-image');
 
-// TODO: Create a function called `recordChoice()` that will accept a `slug`
-// parameter and add it to the `choiceList` Array (probably using `push()`).
+function updatePage(storyPage) {
+    pageContent.textContent = storyPage.text; {
+        if (storyPage.image) {
+            image_tracker.setAttribute('src', 'images/' + storyPage.image);
+        } else {
+            image_tracker.setAttribute('src', "./images/placeholder.jpg");
+        }
+    }
+    choicesUL.innerHTML = '';
+    for (choice of storyPage.choices) {
+        let newLI = document.createElement('li');
+        newLI.textContent = choice.text;
+        newLI.setAttribute('data-slug', choice.link);
+        choicesUL.appendChild(newLI);
+    }
+    addEventListeners();
+}
 
-
-
-// TODO: Create a function called `undoChoice()` that will remove the last
-// `slug` in the `choiceList` Array and then will return the last `slug` in the
-// `choiceList` Array.
-
-
-
-// TODO: Create two variables: pageContent and choicesUL. Use a DOM selector
-// method (such as querySelector or getElementByID) to set the variable 
-// pageContent to the <p> element with the ID of 'story-text' and set the
-// variable choicesUL to the <ul> element with the ID 'choices'.
-
-// TODO: Create a function called `updatePage()` that accepts a `page` parameter
-// and handles displaying the page in three steps:
-//  1. It should set the text of the pageContent equal to page.text (the text of
-//     the page).
-//  2. For each item in the array page.choices, it should create a new <li>
-//     element with the text of page.choices[i].text. In addition, the <li>
-//     element should have an attribute called 'data-slug' set to
-//     page.choices[i].link.
-//  3. At the end of the function, call the function addEventListeners().
-
-
-
-// TODO: Create a function called `changePage()` that accepts a parameter called
-// `slug` and which handles "turning the page" in three steps:
-//  1. It should call the `recordChoice()` function (and give it the `slug` as
-//     a parameter.
-//  2. It should set the `currentPage` value by calling the `getCurrentPage()`
-//     function (and give it the `slug` as a parameter).
-//  3. It should invoke the `updatePage()` function (and give it the
-//     `currentPage` object as a parameter).
-
-
+function changePage(newSlug) {
+    recordChoice(newSlug);
+    let newPage = getCurrentPage(newSlug);
+    updatePage(newPage);
+}
 
 ///////////////////////////////////////////////////
 //////// Story Data //////////////////////////////
@@ -74,21 +65,23 @@ var storyData = {
         text: `You are a crow. You are flying high above the
                 countryside. You see a farm off to the West, and your home forest
                 off to the East.`,
+        image: "crow.jpg",
         choices: [
             {
                 text: `Fly over the farm to the West.`,
-                link: 'p2'
+                link: 'p2',
             }, {
                 text: `Fly back home to your nest in the forest.`,
                 link: 'homeEnd'
             }
         ]
     },
-    homeEnd : {
+    homeEnd: {
         text: `You return home to your comfy roost in the forest canopy and
                 enjoy a hot cup of tea!
-                <br><br>
+                
                 The End.`,
+        image: "tea.jpg",
         choices: [
             {
                 text: `Play again?`,
@@ -96,11 +89,12 @@ var storyData = {
             }
         ]
     },
-    p2 : {
+    p2: {
         text: `You fly over the Farm and see a piece of cheese lying on the
                 picnic table. There are no people around that you can see. The
                 cheese looks very tasty, but you are worried there might be a
                 person or, even worse, a CAT lurking somewhere you can't see.`,
+        image: "picnic.jpg",
         choices: [
             {
                 text: `Go for the cheese!`,
@@ -111,10 +105,11 @@ var storyData = {
             }
         ]
     },
-    p3 : {
+    p3: {
         text: `You swoop down and pluck the cheese from the table. Just as you
                 grab hold of the cheese, the farmer's cat leaps onto the table
                 ahead of you!`,
+        image: "cat.jpg",
         choices: [
             {
                 text: `Veer off to the left trying to avoid the cat.`,
@@ -125,12 +120,13 @@ var storyData = {
             }
         ]
     },
-    basketEnd : {
+    basketEnd: {
         text: `You fly directly into a picnic basket, which slams shut behind you.
                 You are stuck until some kind human comes to open the basket.
                 But at least the cat didn't eat you!
-                <br><br>
+            
                 The End`,
+        image: "flying.jpg",
         choices: [
             {
                 text: `Start over?`,
@@ -138,12 +134,13 @@ var storyData = {
             }
         ]
     },
-    p4 : {
+    p4: {
         text: `You zoom towards the cat, who is surprised by the direct approach
                 and leaps off the table. You pull up sharply and make it over the
                 big oak tree to a safe cruising altitude. The sun is shining,
                 the wind is beneath your wings, and you have a beak full of
                 cheese.`,
+        image: "cheese.jpg",
         choices: [
             {
                 text: `Find somewhere nice to eat your cheese.`,
@@ -151,13 +148,14 @@ var storyData = {
             }
         ]
     },
-    p5 : {
+    p5: {
         text: `You find a secluded fence post in the middle of a large field
                 full of wildflowers. You decide this will be a wonderful place
                 to have a snack.
-                <br><br>
+                
                 Just as you settle down you see Mr. Fox strolling down the path
                 towards your fence post.`,
+        image: "fox.jpg",
         choices: [
             {
                 text: `Say, "Hello Mr. Fox! Join me for cheese."`,
@@ -168,12 +166,13 @@ var storyData = {
             }
         ]
     },
-    shareCheese : {
+    shareCheese: {
         text: `You hop down to the ground and Mr. Fox helps you break the cheese
                 in half. He is very grateful to you for sharing your cheese, and
                 he gives you a lovely ribbon for your nest.
-                <br><br>
+                
                 The End`,
+        image: "ribbon.jpg",
         choices: [
             {
                 text: `Start over?`,
@@ -181,10 +180,11 @@ var storyData = {
             }
         ]
     },
-    p6 : {
+    p6: {
         text: `Mr. Fox approaches and says, "Hello crow! It's been so
                 long since we've seen each other. I've missed hearing your
                 lovely singing voice. Won't you sing me a tune before I go?`,
+        image: "crow-2.jpg",
         choices: [
             {
                 text: `Sing a song for Mr. Fox.`,
@@ -195,12 +195,13 @@ var storyData = {
             }
         ]
     },
-    dropCheeseEnd : {
+    dropCheeseEnd: {
         text: `You open your beak to sing a lovely song, and your cheese comes
                 tumbling out. Mr. Fox quickly snaps the cheese out of the air
                 as it falls and gobbles it up!
-                <br><br>
+                
                 The End`,
+        image: "sad.jpg",
         choices: [
             {
                 text: `Start over?`,
@@ -208,14 +209,15 @@ var storyData = {
             }
         ]
     },
-    p7 : {
+    p7: {
         text: `You remain silent through all of Mr. Fox's flattery. In the end,
                 he knows you won't fall for his tricks, and he leaves you alone.
-                <br><br>
+                
                 Finally able to relax in quiet, you enjoy your well-earned
                 cheese.
-                <br><br>
+                
                 The End`,
+        image: "happy.jpg",
         choices: [
             {
                 text: `Play again?`,
@@ -237,10 +239,10 @@ let title = document.querySelector('#story-title');
 title.innerHTML = storyData.title;
 
 
-function addEventListeners(){
+function addEventListeners() {
     let choices = document.querySelectorAll('#choices li');
-    for (choice of choices){
-        choice.addEventListener('click', function(e){
+    for (choice of choices) {
+        choice.addEventListener('click', function (e) {
             console.log(`Moving to page: ${e.target.dataset.slug}`);
             changePage(e.target.dataset.slug);
         })
@@ -248,7 +250,7 @@ function addEventListeners(){
 }
 
 let undo = document.querySelector('#undo');
-undo.addEventListener('click', function(e){
+undo.addEventListener('click', function (e) {
     console.log('Undoing last choice.');
     let slug = undoChoice();
     currentPage = getCurrentPage(slug);
