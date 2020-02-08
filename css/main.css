@@ -57,9 +57,9 @@ body {
 }
 html {
     background: url('../images/countryside.jpg');
-    background-position: inherit;
     background-size: cover;   
     background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .center {
